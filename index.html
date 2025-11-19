@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday!</title>
+
+<style>
+    body {
+        background: #ffe6f2;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+        margin: 0;
+        height: 100vh;
+        width: 100vw;
+        position: relative;
+    }
+
+    /* Centered text */
+    .center-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 60px;
+        color: #ff1493;
+        text-shadow: 0 0 20px white;
+        font-weight: bold;
+        text-align: center;
+        z-index: 10;
+    }
+
+    /* Images bounce/float */
+    .corner-img {
+        position: absolute;
+        width: 200px;
+        border-radius: 20px;
+        box-shadow: 0 0 20px pink;
+        opacity: 0;
+        animation: bounce 1s ease forwards;
+        transform-origin: center;
+    }
+
+    /* Bounce animation */
+    @keyframes bounce {
+        0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+        40%  { transform: scale(1.2) rotate(0deg); opacity: 1; }
+        60%  { transform: scale(0.9) rotate(0deg); }
+        80%  { transform: scale(1.05) rotate(0deg); }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="center-text">🎉 Happy Birthday!!! 🎉</div>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+    // ----- CONFETTI -----
+    const duration = 8000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+        confetti({
+            particleCount: 5,
+            startVelocity: 30,
+            spread: 360,
+            origin: { x: Math.random(), y: Math.random() - 0.2 }
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
+
+    // ----- 4 Corner Images -----
+    const cornerImages = [
+        { src: "img1.jpg", top: "10px", left: "10px", rotate: -25 },
+        { src: "img2.jpg", top: "10px", right: "10px", rotate: 30 },
+        { src: "img3.jpg", bottom: "10px", left: "10px", rotate: 35 },
+        { src: "img4.jpg", bottom: "10px", right: "10px", rotate: -40 }
+    ];
+
+    cornerImages.forEach((imgData, index) => {
+        setTimeout(() => {
+            const img = document.createElement("img");
+            img.src = imgData.src;
+            img.className = "corner-img";
+
+            // Apply corner positions
+            if (imgData.top) img.style.top = imgData.top;
+            if (imgData.bottom) img.style.bottom = imgData.bottom;
+            if (imgData.left) img.style.left = imgData.left;
+            if (imgData.right) img.style.right = imgData.right;
+
+            // Apply tilt
+            img.style.transform = `rotate(${imgData.rotate}deg)`;
+
+            document.body.appendChild(img);
+
+            // Floating effect
+            let directionX = Math.random() < 0.5 ? -1 : 1;
+            let directionY = Math.random() < 0.5 ? -1 : 1;
+            let amplitude = 10 + Math.random() * 5; // pixels
+            let speed = 0.02 + Math.random() * 0.01;
+            let angle = 0;
+
+            function floatImg() {
+                angle += speed;
+                img.style.transform = `rotate(${imgData.rotate}deg) translate(${Math.sin(angle)*amplitude*directionX}px, ${Math.cos(angle)*amplitude*directionY}px)`;
+                requestAnimationFrame(floatImg);
+            }
+            floatImg();
+
+        }, index * 800); // stagger pop-ins
+    });
+</script>
+
+<button id="playMusic" style="position:absolute; top:10px; left:500px; z-index:100;">
+    🎵 Play Birthday Music
+</button>
+
+<script>
+document.getElementById('playMusic').addEventListener('click', () => {
+    const audio = new Audio('hbday.mp3');
+    audio.play();
+});
+</script>
+
+</body>
+</html>
